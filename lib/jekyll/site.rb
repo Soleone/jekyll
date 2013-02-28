@@ -44,6 +44,16 @@ module Jekyll
       self.write
     end
 
+    # Public: Read and write only the static files to output.
+    #
+    # Returns nothing.
+    def process_static
+      self.reset
+      self.read
+      self.generate
+      self.write_static
+    end
+
     # Reset Site details.
     #
     # Returns nothing
@@ -290,6 +300,15 @@ module Jekyll
       end
     end
 
+    # Writes just the static files.
+    #
+    # Returns nothing.
+    def write_static
+      self.static_files.each do |sf|
+        sf.write(self.dest)
+      end
+    end
+
     # Construct a Hash of Posts indexed by the specified Post attribute.
     #
     # post_attr - The String name of the Post attribute.
@@ -366,6 +385,23 @@ module Jekyll
       else
         raise "Converter implementation not found for #{klass}"
       end
+    end
+
+    # Checks if the passed in files are only static files.
+    #
+    # Returns boolean
+    def only_static?(files=nil)
+      self.reset
+      self.read
+
+      if files && files.any?
+        extensions = files.map{|f| f.path.split(".").last.downcase }.uniq
+        extension_whitelist = %w{ scss css eot svg ttf woff png jpg gif txt } # add more if required! Or refactor this out into an options option.
+
+        return true unless (extensions - extension_whitelist).any?
+      end
+
+      false
     end
   end
 end

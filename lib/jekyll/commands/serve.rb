@@ -13,11 +13,18 @@ module Jekyll
         mime_types.store 'js', 'application/javascript'
         mime_types.store 'svg', 'image/svg+xml'
 
-        s = HTTPServer.new(
+        server_options =  {
           :Port => options['port'],
           :BindAddress => options['host'],
           :MimeTypes => mime_types
-        )
+        }
+
+        if options['server_quiet']
+          server_options[:Logger] = WEBrick::Log::new("/dev/null", 7)
+          server_options[:AccessLog] = []
+        end
+
+        s = HTTPServer.new(server_options)
 
         s.mount(options['baseurl'], HTTPServlet::FileHandler, destination)
         t = Thread.new { s.start }

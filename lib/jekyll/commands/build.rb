@@ -59,10 +59,15 @@ module Jekyll
         dw.glob = self.globs(source, destination)
 
         dw.add_observer do |*args|
-          t = Time.now.strftime("%Y-%m-%d %H:%M:%S")
-          print "      Regenerating: #{args.size} files at #{t} "
-          site.process
-          puts  "...done."
+          t = Time.now
+          print "      Regenerating: #{args.size} files at #{t.strftime("%Y-%m-%d %H:%M:%S")} "
+          if site.only_static?(args)
+            puts "  Only static files."
+            site.process_static
+          else
+            site.process
+          end
+          puts  "...done in #{Time.now.to_i - t.to_i} seconds."
         end
 
         dw.start
