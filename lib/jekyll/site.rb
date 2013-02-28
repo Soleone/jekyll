@@ -396,7 +396,7 @@ module Jekyll
 
       if files && files.any?
         extensions = files.map{|f| f.path.split(".").last.downcase }.uniq
-        extension_whitelist = %w{ scss css eot svg ttf woff png jpg gif txt } # add more if required! Or refactor this out into an options option.
+        extension_whitelist = %w{ scss css eot svg ttf woff png jpg gif txt js } # add more if required! Or refactor this out into an options option.
 
         return true unless (extensions - extension_whitelist).any?
       end
